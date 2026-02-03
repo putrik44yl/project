@@ -121,8 +121,8 @@
 </head>
 <body>
   <div class="login-box">
-    <h2 class="login-title">Wilujeng Sumping</h2>
-    <p class="login-subtitle">Sok Login Hela, Meh Bisa Asup</p>
+    <h2 class="login-title">Selamat Datang</h2>
+    <p class="login-subtitle">Login Terlebih Dahulu</p>
 
     <form method="POST" action="{{ route('login') }}">
       @csrf

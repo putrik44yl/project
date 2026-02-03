@@ -14,7 +14,7 @@ class RuanganController extends Controller
     {
         $ruangans = ruangans::latest()->get();
 
-        $title = 'takut ga sama gurita?!';
+        $title = '!!!!!!';
         $text  = "Apakah anda yakin ingin menghapus ruangan ini?";
         confirmDelete($title, $text);
 
