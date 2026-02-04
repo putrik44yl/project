@@ -106,7 +106,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item">
+                                            <a href="{{ route('backend.bookings.edit', $booking->id) }}" class="dropdown-item">
                                                 <i class="ti ti-pencil me-1"></i> Edit
                                             </a>
                                         </li>

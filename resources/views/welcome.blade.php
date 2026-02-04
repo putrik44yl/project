@@ -7,7 +7,7 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-6 text-center text-lg-start">
-          <h1 class="fw-bold text-primary">SIRUANG</h1>
+          <h1 class="fw-bold text-primary">RUANGKU</h1>
           <p class="text-muted fs-5 mb-4">
             Sistem Penjadwalan Ruangan Kelas dan Laboratorium. Digital, efisien, dan bebas bentrok jadwal.
           </p>

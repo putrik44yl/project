@@ -28,7 +28,7 @@
                         @foreach ($ruangans as $ruangan)
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
-                            <td class="text-center"><img src="{{ asset('storage/'.$ruangan->cover) }}" alt="cover" width="100%"></td>
+                            <td class="text-center"><img src="{{ asset('storage/'.$ruangan->cover) }}" alt="cover" width="80%"></td>
                             <td class="text-center">{{ $ruangan->nama }}</td>
                             <td class="text-center">{{ $ruangan->kapasitas }}</td>
                             <td class="text-center">{{Str::limit( $ruangan->fasilitas, 20 )}}</td>

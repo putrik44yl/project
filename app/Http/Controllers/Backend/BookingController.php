@@ -56,6 +56,42 @@ class BookingController extends Controller
         return view('backend.bookings.index', compact('bookings', 'ruangans'));
     }
 
+    public function edit($id)
+    {
+        $bookings  = bookings::findOrFail($id);
+        $users    = User::all();
+        $ruangans = ruangans::all();
+
+        return view('backend.bookings.edit', compact('bookings', 'users', 'ruangans'));
+    }
+
+    public function update(Request $request, string $id)
+{
+    $request->validate([
+        'user_id'     => 'required|exists:users,id',
+        'ruang_id'    => 'required|exists:ruangans,id',
+        'tanggal'     => 'required|date',
+        'jam_mulai'   => 'required',
+        'jam_selesai' => 'required|after:jam_mulai',
+        'status'      => 'required|in:Diterima,Ditolak,Pending,Selesai',
+    ]);
+
+    $bookings = bookings::findOrFail($id);
+
+    $bookings->user_id     = $request->user_id;
+    $bookings->ruang_id    = $request->ruang_id;
+    $bookings->tanggal     = $request->tanggal;
+    $bookings->jam_mulai   = $request->jam_mulai;
+    $bookings->jam_selesai = $request->jam_selesai;
+    $bookings->status      = $request->status;
+
+    $bookings->save();
+
+    toast('Data booking berhasil diupdate.', 'success');
+    return redirect()->route('backend.bookings.index');
+}
+
+
     public function destroy($id)
     {
         $booking = bookings::findOrFail($id);

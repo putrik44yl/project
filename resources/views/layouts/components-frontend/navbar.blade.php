@@ -18,7 +18,7 @@
 
       <!-- Logo -->
       <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">
-        <img src="{{ asset('assets/backend/img/navuser.png') }}" alt="Logo" style="height: 40px;">
+        <img src="{{ asset('assets/backend/img/navuser.png') }}" alt="Logo" style="height: 80px;">
       </a>
 
       <!-- Toggle Button (Mobile) -->
