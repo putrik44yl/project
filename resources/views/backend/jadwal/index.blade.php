@@ -9,7 +9,8 @@
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Jadwal Tetap</h4>
-            <a href="#" class="btn btn-sm btn-light text-primary fw-semibold">Tambah Data</a>
+            <a href="{{ route('backend.jadwal.create') }}" class="btn btn-sm btn-light text-primary fw-semibold">
+                <i class="ti ti-plus me-1"></i> Tambah Data</a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
