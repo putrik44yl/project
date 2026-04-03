@@ -11,36 +11,42 @@ use App\Http\Middleware\Admin;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-
-
+// ================= FRONTEND =================
 Route::get('/', [FrontendController::class, 'index']);
 Auth::routes();
 
-Route::get('/booking', [FrontendController::class, 'booking']);
-Route::resource('/bookings', BookingController::class);
+// booking (user)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/booking/create', [UserBookingController::class, 'create'])->name('bookings.create');
+    Route::post('/booking', [UserBookingController::class, 'store'])->name('bookings.store'); // ✅ FIX
+    Route::get('/booking/riwayat', [UserBookingController::class, 'riwayat'])->name('bookings.riwayat'); // opsional biar konsisten
 
+    Route::get('/ruangan', [UserBookingController::class, 'show'])->name('ruangan.list');
+});
 
+Route::get('/ruangan/{id}', [FrontendController::class, 'ruanganShow'])
+    ->name('ruangan.show');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-Route::group(['prefix' => 'admin', 'as' => 'backend.', 'middleware' => ['auth', Admin::class]], function () {
+// ================= ADMIN =================
+Route::group([
+    'prefix' => 'admin',
+    'as' => 'backend.',
+    'middleware' => ['auth', Admin::class]
+], function () {
+
     Route::get('/', [BackendController::class, 'index']);
+
     Route::resource('/user', UserController::class);
     Route::resource('/ruangan', RuanganController::class);
     Route::resource('/jadwal', JadwalController::class);
     Route::resource('/bookings', BookingController::class);
-    
-}); 
 
+    Route::get('/ruangan/export/pdf', [RuanganController::class, 'exportPdf'])
+        ->name('ruangan.export.pdf');
 
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/booking/create', [UserBookingController::class, 'create'])->name('bookings.create');
-    Route::post('/booking', [UserBookingController::class, 'store'])->name('bookings.store');
-    Route::get('/booking/riwayat', [UserBookingController::class, 'riwayat'])->name('bookings.riwayat');
-    Route::get('/ruangan', [UserBookingController::class, 'show'])->name('ruangan.show');
-    Route::get('/ruangan/{id}', [UserBookingController::class, 'tampil'])->name('ruangan.show');
+    Route::get('/bookings/export/pdf', [BookingController::class, 'exportPdf'])
+        ->name('bookings.export.pdf');
 });
-
-Route::get('/ruangan/{id}', [FrontendController::class, 'ruanganShow'])->name('ruangan.detail');

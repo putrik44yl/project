@@ -36,7 +36,7 @@
             <a class="nav-link text-dark fw-medium" href="{{ route('bookings.create') }}">Booking</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-dark fw-medium" href="{{ route('ruangan.show') }}">Ruangan</a>
+            <a class="nav-link text-dark fw-medium" href="{{ route('ruangan.list') }}">Ruangan</a>
           </li>
           @auth
           <li class="nav-item">

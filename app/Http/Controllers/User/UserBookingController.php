@@ -12,11 +12,14 @@ use Carbon\Carbon;
 
 class UserBookingController extends Controller
 {
-
-    public function create()
+    // ================= BOOKING =================
+    public function create(Request $request)
     {
         $ruangans = ruangans::all();
-        return view('booking_create', compact('ruangans'));
+
+        $selectedRuangan = $request->ruangan_id;
+
+        return view('booking_create', compact('ruangans', 'selectedRuangan'));
     }
 
     public function store(Request $request)
@@ -27,8 +30,7 @@ class UserBookingController extends Controller
             'jam_mulai'   => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
         ]);
- 
-        
+
         $tanggalInput = Carbon::parse($request->tanggal)->format('Y-m-d');
         $hariIni = Carbon::now()->format('Y-m-d');
 
@@ -37,11 +39,11 @@ class UserBookingController extends Controller
             if ($jamSelesai->lt(Carbon::now())) {
                 return back()
                     ->withInput()
-                    ->with('error', 'Waktu booking sudah lewat. Silakan pilih waktu yang valid.');
+                    ->with('error', 'Waktu booking sudah lewat.');
             }
         }
 
-        //  boking => boking bentrok
+        // ================= CEK BENTROK BOOKING =================
         $cekBentrok = bookings::where('ruang_id', $request->ruang_id)
             ->where('tanggal', $request->tanggal)
             ->where(function ($query) use ($request) {
@@ -49,37 +51,33 @@ class UserBookingController extends Controller
                     ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
                     ->orWhere(function ($q) use ($request) {
                         $q->where('jam_mulai', '<=', $request->jam_mulai)
-                        ->where('jam_selesai', '>=', $request->jam_selesai);
+                          ->where('jam_selesai', '>=', $request->jam_selesai);
                     });
             })
             ->exists();
 
         if ($cekBentrok) {
-            toast('Jadwal ada yang boking !!', 'error');
-            return back()->withInput();
+            return back()->withInput()->with('error', 'Jadwal sudah dibooking!');
         }
 
-
-        // bentrok dengan jadwal tetap
+        // ================= CEK BENTROK JADWAL =================
         $bentrokJadwal = jadwals::where('ruang_id', $request->ruang_id)
-            ->where('tanggal', $request->tanggal) // cek tanggal yang sama
+            ->where('tanggal', $request->tanggal)
             ->where(function ($data) use ($request) {
-                $data
-                    ->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
+                $data->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
                     ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai])
                     ->orWhere(function ($jadwal) use ($request) {
-                        $jadwal->where('jam_mulai', '<=', $request->jam_mulai)->where('jam_selesai', '>=', $request->jam_selesai);
+                        $jadwal->where('jam_mulai', '<=', $request->jam_mulai)
+                               ->where('jam_selesai', '>=', $request->jam_selesai);
                     });
             })
             ->exists();
 
         if ($bentrokJadwal) {
-            toast('bentrok dengan jadwal tetap !!', 'error');
-            return back()->withInput();
+            return back()->withInput()->with('error', 'Bentrok dengan jadwal tetap!');
         }
 
-
-        // waktu kosong harus 30 menit
+        // ================= CEK JEDA 30 MENIT =================
         $lastBooking = bookings::where('ruang_id', $request->ruang_id)
             ->where('tanggal', $request->tanggal)
             ->where('jam_selesai', '<=', $request->jam_mulai)
@@ -90,14 +88,12 @@ class UserBookingController extends Controller
             $lastEnd = Carbon::parse($request->tanggal . ' ' . $lastBooking->jam_selesai);
             $newStart = Carbon::parse($request->tanggal . ' ' . $request->jam_mulai);
 
-            if ($lastEnd->gt($newStart->subMinutes(30))) {
-                toast('Harus ada jeda minimal 30 menit setelah pemakaian sebelumnya!', 'error');
-                return back()->withInput()->with('error', 'Harus ada jeda minimal 30 menit setelah pemakaian sebelumnya!');
+            if ($lastEnd->gt($newStart->copy()->subMinutes(30))) {
+                return back()->withInput()->with('error', 'Harus ada jeda 30 menit!');
             }
         }
 
-    
-
+        // ================= SIMPAN =================
         $booking = new bookings();
         $booking->user_id     = Auth::id();
         $booking->ruang_id    = $request->ruang_id;
@@ -107,32 +103,29 @@ class UserBookingController extends Controller
         $booking->status      = 'Pending';
         $booking->save();
 
-        toast('Tunggu Sebentar', 'success');
-        return redirect()->route('bookings.create');
+        return redirect()->route('bookings.create')
+            ->with('success', 'Booking berhasil, tunggu konfirmasi!');
     }
 
+    // ================= RIWAYAT =================
     public function riwayat()
-{
-    $booking = bookings::where('user_id', Auth::id())
-        ->orderBy('tanggal', 'desc')
-        ->get()
-        ->map(function ($item) {
-            $item->tanggal_format = Carbon::parse($item->tanggal)->translatedFormat('l, j F Y');
-            return $item;
-        });
+    {
+        $booking = bookings::where('user_id', Auth::id())
+            ->orderBy('tanggal', 'desc')
+            ->get()
+            ->map(function ($item) {
+                $item->tanggal_format = Carbon::parse($item->tanggal)
+                    ->translatedFormat('l, j F Y');
+                return $item;
+            });
 
-    return view('booking_riwayat', compact('booking'));
-}
+        return view('booking_riwayat', compact('booking'));
+    }
 
+    // ================= LIST RUANGAN =================
     public function show()
     {
-        $ruangan = ruangans::all();
-        return view('ruangan', compact('ruangan'));
-    }
-
-    public function tampil(string $id)
-    {
-        $ruangan = ruangans::findOrFail($id);
-        return view('ruangan_detail', compact('ruangan'));
+        $ruangans = ruangans::all();
+        return view('ruangan', compact('ruangans'));
     }
 }

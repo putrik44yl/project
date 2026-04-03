@@ -100,4 +100,27 @@ class BookingController extends Controller
         toast('Booking berhasil dihapus.', 'success');
         return redirect()->route('backend.bookings.index');
     }
+    public function exportPdf(Request $request)
+    {
+        $query = bookings::with(['user', 'ruangan']);
+
+        // 🔍 filter (biar sama kayak di tabel)
+        if ($request->filled('ruang_id')) {
+            $query->where('ruang_id', $request->ruang_id);
+        }
+
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal', $request->tanggal);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $bookings = $query->get();
+
+        $pdf = Pdf::loadView('backend.bookings.pdf', compact('bookings'));
+
+        return $pdf->download('data-booking.pdf');
+    }
 }

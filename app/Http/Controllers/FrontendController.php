@@ -12,7 +12,7 @@ class FrontendController extends Controller
     {
         $bookings = Bookings::with('ruangan')->get();
         $jadwals = Jadwals::with('ruangan')->get();
-
+        $ruangans = ruangans::all(); 
         $events = [];
 
         foreach ($bookings as $booking) {
@@ -33,7 +33,10 @@ class FrontendController extends Controller
             ];
         }
 
-        return view('welcome', ['jadwal' => $events]);
+        return view('welcome', [
+            'jadwal' => $events,
+            'ruangans' => $ruangans
+        ]);
     }
 
     public function booking()

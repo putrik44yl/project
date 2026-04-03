@@ -7,14 +7,16 @@
 @section('content')
 <div class="container-fluid">
     <div class="card shadow-sm">
-        <!-- Header -->
-        <div class="card-header bg-primary text-white d-flex align-items-center">
+                <!-- Header -->
+            <div class="card-header bg-primary text-white d-flex align-items-center">
             <h5 class="mb-0">Data Booking</h5>
             <div class="d-flex gap-2 ms-auto">
-                <a href="#" class="btn btn-sm btn-danger">
+                <a href="{{ route('backend.bookings.export.pdf', request()->query()) }}" 
+                class="btn btn-sm btn-danger">
                     <i class="fa fa-file-pdf me-1"></i> Export PDF
                 </a>
-                <a href="#" class="btn btn-sm btn-light text-primary fw-semibold">
+                <a href="{{ route('bookings.create') }}" 
+                class="btn btn-sm btn-light text-primary fw-semibold">
                     <i class="ti ti-plus me-1"></i> Tambah Booking
                 </a>
             </div>
@@ -70,16 +72,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($bookings as $booking)
+                        @forelse ($bookings as $booking)
                         <tr>
                             <td class="text-center">{{ $loop->iteration }}</td>
-                            <td class="text-center">{{ $booking->user->name }}</td>
-                            <td class="text-center">{{ $booking->ruangan->nama }}</td>
+                            <td class="text-center">{{ $booking->user->name ?? '-' }}</td>
+                            <td class="text-center">{{ $booking->ruangan->nama ?? '-' }}</td>
                             <td class="text-center">{{ $booking->tanggal_format }}</td>
                             <td class="text-center">{{ $booking->jam_mulai }}</td>
                             <td class="text-center">{{ $booking->jam_selesai }}</td>
                             <td class="text-center">
-                                 @switch($booking->status)
+                                @switch($booking->status)
                                     @case('Pending')
                                         <span class="badge bg-light text-dark">Pending</span>
                                         @break
@@ -101,29 +103,26 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href="#" class="dropdown-item">
-                                                <i class="ti ti-search me-1"></i> Detail
-                                            </a>
-                                        </li>
-                                        <li>
                                             <a href="{{ route('backend.bookings.edit', $booking->id) }}" class="dropdown-item">
                                                 <i class="ti ti-pencil me-1"></i> Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="{{ route('backend.bookings.destroy', $booking->id) }}" method="POST" onsubmit="return confirm('Yakin hapus data ini?')">
+                                            <form action="{{ route('backend.bookings.destroy', $booking->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="dropdown-item text-danger" type="submit">
-                                                    <i class="ti ti-trash me-1"></i> Hapus
-                                                </button>
+                                                <button type="submit">Hapus</button>
                                             </form>
                                         </li>
                                     </ul>
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center">Tidak ada data booking</td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

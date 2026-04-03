@@ -8,7 +8,7 @@
         </div>
 
         <div class="row g-4">
-            @foreach($ruangan as $data)
+            @foreach($ruangans as $data)
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm transition-all duration-300 hover-shadow-lg hover-transform-up">
                     @if($data->cover)
@@ -41,7 +41,7 @@
                     </div>
                     
                     <div class="card-footer bg-transparent border-top-0 pt-0 pb-3">
-                        <a href="{{ route('ruangan.detail', $data->id) }}" class="btn btn-outline-primary w-0">
+                        <a href="{{ route('ruangan.show', $data->id) }}" class="btn btn-outline-primary w-100">
                             <i class="ti ti-eye"></i> Detail
                         </a>
                     </div>
