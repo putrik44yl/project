@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Jadwals;
+use App\Models\Jadwal;
 use App\Models\ruangans;
 
 class FrontendController extends Controller
@@ -11,7 +11,7 @@ class FrontendController extends Controller
     public function index()
     {
         $bookings = Booking::with('ruangan')->get();
-        $jadwals = Jadwals::with('ruangan')->get();
+        $jadwals = Jadwal::with('ruangan')->get();
         $ruangans = ruangans::all(); 
         $events = [];
 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class jadwals extends Model
+class Jadwal extends Model
 {
     protected $fillable = ['ruang_id', 'tanggal', 'jam_mulai', 'jam_selesai', 'ket'];
 
