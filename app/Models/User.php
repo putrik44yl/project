@@ -7,6 +7,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Booking;
 
 class User extends Authenticatable
 {
@@ -49,6 +50,6 @@ class User extends Authenticatable
 
      public function bookings()
     {
-        return $this->hasMany(bookings::class);
+        return $this->hasMany(Booking::class);
     }
 }

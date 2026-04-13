@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\jadwals;
-use App\Models\ruangans;
+use App\Models\Jadwal;
+use App\Models\Ruangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -12,7 +12,10 @@ class JadwalController extends Controller
 {
     public function index()
     {
-        $jadwals = jadwals::orderBy('tanggal', 'desc')->get()->map(function ($jadwal) {
+        $jadwals = Jadwal::with('ruangan')
+        ->orderBy('tanggal', 'desc')
+        ->get()
+        ->map(function ($jadwal) {
             $jadwal->tanggal_format = Carbon::parse($jadwal->tanggal)
                 ->translatedFormat('l, j F Y');
             return $jadwal;
@@ -27,14 +30,14 @@ class JadwalController extends Controller
 
     public function create()
     {
-        $jadwals  = jadwals::all();   // sebenarnya ini nggak wajib
-        $ruangans = ruangans::all();
+        $jadwals  = Jadwal::all();   // sebenarnya ini nggak wajib
+        $ruangans = Ruangan::all();
 
         return view('backend.jadwal.create', compact('jadwals', 'ruangans'));
     }
 
     public function store(Request $request)
-{
+    {
     $validated = $request->validate([
         'ruang_id'   => 'required|exists:ruangans,id',
         'tanggal'    => 'required|date',
@@ -43,7 +46,7 @@ class JadwalController extends Controller
         'ket'        => 'nullable|string',
     ]);
 
-    jadwals::create([
+    Jadwal::create([
         'ruang_id'   => $validated['ruang_id'],
         'tanggal'    => $validated['tanggal'],
         'jam_mulai'  => $validated['jam_mulai'],

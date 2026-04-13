@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Jadwal;
-use App\Models\ruangans;
+use App\Models\Ruangan;
 
 class FrontendController extends Controller
 {
@@ -12,7 +12,7 @@ class FrontendController extends Controller
     {
         $bookings = Booking::with('ruangan')->get();
         $jadwals = Jadwal::with('ruangan')->get();
-        $ruangans = ruangans::all(); 
+        $ruangans = Ruangan::all(); 
         $events = [];
 
         foreach ($bookings as $booking) {
@@ -46,7 +46,7 @@ class FrontendController extends Controller
 
     public function ruanganShow(string $id)
     {
-        $ruangan = ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
         return view('ruangan_detail', compact('ruangan'));
     }       
 }

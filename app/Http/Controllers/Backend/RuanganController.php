@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\ruangans;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ class RuanganController extends Controller
 {
     public function index()
     {
-        $ruangans = ruangans::latest()->get();
+        $ruangans = Ruangan::latest()->get();
 
         $title = '!!!!!!';
         $text  = "Apakah anda yakin ingin menghapus ruangan ini?";
@@ -35,7 +35,7 @@ class RuanganController extends Controller
             'cover'     => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $ruangan = new ruangans();
+        $ruangan = new Ruangan();
 
         if ($request->hasFile('cover')) {
             $file       = $request->file('cover');
@@ -61,7 +61,7 @@ class RuanganController extends Controller
 
     public function edit(string $id)
     {
-        $ruangan = ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
         return view('backend.ruangan.edit', compact('ruangan'));
     }
 
@@ -74,7 +74,7 @@ class RuanganController extends Controller
             'cover'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $ruangan = ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
 
         if ($request->hasFile('cover')) {
             Storage::disk('public')->delete($ruangan->cover);
@@ -95,7 +95,7 @@ class RuanganController extends Controller
 
     public function destroy(string $id)
     {
-        $ruangan = ruangans::findOrFail($id);
+        $ruangan = Ruangan::findOrFail($id);
         Storage::disk('public')->delete($ruangan->cover);
         $ruangan->delete();
  

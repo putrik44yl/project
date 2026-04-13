@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\bookings;
-use App\Models\ruangans;
-use App\Models\jadwals;
+use App\Models\Booking;
+use App\Models\Ruangan;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -15,7 +15,7 @@ class UserBookingController extends Controller
     // ================= BOOKING =================
     public function create(Request $request)
     {
-        $ruangans = ruangans::all();
+        $ruangans = Ruangan::all();
 
         $selectedRuangan = $request->ruangan_id;
 
@@ -44,7 +44,7 @@ class UserBookingController extends Controller
         }
 
         // ================= CEK BENTROK BOOKING =================
-        $cekBentrok = bookings::where('ruang_id', $request->ruang_id)
+        $cekBentrok = Booking::where('ruang_id', $request->ruang_id)
             ->where('tanggal', $request->tanggal)
             ->where(function ($query) use ($request) {
                 $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
@@ -61,7 +61,7 @@ class UserBookingController extends Controller
         }
 
         // ================= CEK BENTROK JADWAL =================
-        $bentrokJadwal = jadwals::where('ruang_id', $request->ruang_id)
+        $bentrokJadwal = Jadwal::where('ruang_id', $request->ruang_id)
             ->where('tanggal', $request->tanggal)
             ->where(function ($data) use ($request) {
                 $data->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
@@ -78,7 +78,7 @@ class UserBookingController extends Controller
         }
 
         // ================= CEK JEDA 30 MENIT =================
-        $lastBooking = bookings::where('ruang_id', $request->ruang_id)
+        $lastBooking = Booking::where('ruang_id', $request->ruang_id)
             ->where('tanggal', $request->tanggal)
             ->where('jam_selesai', '<=', $request->jam_mulai)
             ->orderBy('jam_selesai', 'desc')
@@ -94,7 +94,7 @@ class UserBookingController extends Controller
         }
 
         // ================= SIMPAN =================
-        $booking = new bookings();
+        $booking = new Booking();
         $booking->user_id     = Auth::id();
         $booking->ruang_id    = $request->ruang_id;
         $booking->tanggal     = $request->tanggal;
@@ -110,7 +110,7 @@ class UserBookingController extends Controller
     // ================= RIWAYAT =================
     public function riwayat()
     {
-        $booking = bookings::where('user_id', Auth::id())
+        $booking = Booking::where('user_id', Auth::id())
             ->orderBy('tanggal', 'desc')
             ->get()
             ->map(function ($item) {
@@ -125,7 +125,7 @@ class UserBookingController extends Controller
     // ================= LIST RUANGAN =================
     public function show()
     {
-        $ruangans = ruangans::all();
+        $ruangans = Ruangan::all();
         return view('ruangan', compact('ruangans'));
     }
 }

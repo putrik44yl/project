@@ -29,7 +29,7 @@
                     <div class="text-center">
                       <i class="ti ti-door" style="font-size: 70px; color: white;"></i>
                       <p class="fw-semibold fs-3 text-light mb-1">Ruangan</p>
-                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\ruangans::count() }}</h5>
+                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\Ruangan::count() }}</h5>
                     </div>
                   </div>
                 </a>
@@ -45,7 +45,7 @@
                     <div class="text-center">
                       <i class="ti ti-calendar" style="font-size: 70px; color: white;"></i>
                       <p class="fw-semibold fs-3 text-light mb-1">jadwal</p>
-                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\jadwals::count() }}</h5>
+                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\Jadwal::count() }}</h5>
                     </div>
                   </div>
                 </a>
@@ -61,7 +61,7 @@
                     <div class="text-center">
                       <i class="ti ti-bookmark" style="font-size: 70px; color: white;"></i>
                       <p class="fw-semibold fs-3 text-light mb-1">booking</p>
-                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\bookings::count() }}</h5>
+                      <h5 class="fw-semibold text-light mb-0">{{ \App\Models\Booking::count() }}</h5>
                     </div>
                   </div>
                 </a>

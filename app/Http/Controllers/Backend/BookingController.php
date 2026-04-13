@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\bookings;
-use App\Models\ruangans;
-use App\Models\jadwals;
+use App\Models\Booking;
+use App\Models\Ruangan;
+use App\Models\Jadwal;
 use App\Models\User;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -22,7 +22,7 @@ class BookingController extends Controller
     public function index(Request $request)
     {
 
-        bookings::where(function ($query) {
+        Booking::where(function ($query) {
             $query->where('tanggal', '<', now()->toDateString())->orWhere(function ($q) 
             {$q->where('tanggal', now()->toDateString())->where('jam_selesai', '<', now()->format('H:i:s'));         
         });
@@ -32,7 +32,7 @@ class BookingController extends Controller
         ->update(['status' => 'Selesai']);
 
         //mengambil filter
-        $query = bookings::with(['ruangan', 'user'])->orderBy('tanggal', 'desc');
+        $query = Booking::with(['ruangan', 'user'])->orderBy('tanggal', 'desc');
 
         if ($request->filled('ruang_id')) {
             $query->where('ruang_id', $request->ruang_id);
@@ -46,11 +46,11 @@ class BookingController extends Controller
 
         // format tanggal
         $bookings = $query->get()->map(function($booking) {
-            $booking->tanggal_format = Carbon::parse($booking->tanggal)->translatedFormat('l, j F Y');
-            return $booking;
+        $booking->tanggal_format = Carbon::parse($booking->tanggal)->translatedFormat('l, j F Y');
+        return $booking;
         });
 
-        $ruangans = ruangans::all();
+        $ruangans = Ruangan::all();
 
         confirmDelete('Hapus Booking', 'Apakah Anda yakin ingin menghapus booking ini?');
         return view('backend.bookings.index', compact('bookings', 'ruangans'));
@@ -58,15 +58,15 @@ class BookingController extends Controller
 
     public function edit($id)
     {
-        $bookings  = bookings::findOrFail($id);
+        $bookings  = Booking::findOrFail($id);
         $users    = User::all();
-        $ruangans = ruangans::all();
+        $ruangans = Ruangan::all();
 
         return view('backend.bookings.edit', compact('bookings', 'users', 'ruangans'));
     }
 
     public function update(Request $request, string $id)
-{
+    {
     $request->validate([
         'user_id'     => 'required|exists:users,id',
         'ruang_id'    => 'required|exists:ruangans,id',
@@ -76,7 +76,7 @@ class BookingController extends Controller
         'status'      => 'required|in:Diterima,Ditolak,Pending,Selesai',
     ]);
 
-    $bookings = bookings::findOrFail($id);
+    $bookings = Booking::findOrFail($id);
 
     $bookings->user_id     = $request->user_id;
     $bookings->ruang_id    = $request->ruang_id;
@@ -89,12 +89,19 @@ class BookingController extends Controller
 
     toast('Data booking berhasil diupdate.', 'success');
     return redirect()->route('backend.bookings.index');
-}
+    }
 
+    public function create()
+    {
+        $users = User::all();
+        $ruangans = Ruangan::all();
+    
+        return view('backend.bookings.create', compact('users', 'ruangans'));
+    }
 
     public function destroy($id)
     {
-        $booking = bookings::findOrFail($id);
+        $booking = Booking::findOrFail($id);
         $booking->delete();
 
         toast('Booking berhasil dihapus.', 'success');
@@ -102,7 +109,7 @@ class BookingController extends Controller
     }
     public function exportPdf(Request $request)
     {
-        $query = bookings::with(['user', 'ruangan']);
+        $query = Booking::with(['user', 'ruangan']);
 
         // 🔍 filter (biar sama kayak di tabel)
         if ($request->filled('ruang_id')) {

@@ -6,57 +6,68 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Jadwal Tetap</h4>
-            <a href="{{ route('backend.jadwal.create') }}" class="btn btn-sm btn-light text-primary fw-semibold">
-                <i class="ti ti-plus me-1"></i> Tambah Data</a>
+
+    <div class="card shadow border-0 rounded-3">
+
+        <!-- Header -->
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-semibold">Jadwal Tetap</h5>
+
+            <a href="{{ route('backend.jadwal.create') }}" 
+               class="btn btn-primary btn-sm">
+                <i class="ti ti-plus me-1"></i> Tambah
+            </a>
         </div>
+
+        <!-- Table -->
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle" id="jadwalTable">
-                    <thead class="table-head">
+                <table class="table table-hover align-middle" id="jadwalTable">
+                    <thead class="table-light text-center">
                         <tr>
-                            <th class="text-center">No</th>
-                            <th class="text-center">Ruangan</th>
-                            <th class="text-center">Tanggal</th>
-                            <th class="text-center">Jam Mulai</th>
-                            <th class="text-center">Jam Selesai</th>
-                            <th class="text-center">Keterangan</th>
-                            <th class="text-center">Aksi</th>
+                            <th>No</th>
+                            <th>Ruangan</th>
+                            <th>Tanggal</th>
+                            <th>Mulai</th>
+                            <th>Selesai</th>
+                            <th>Keterangan</th>
+                            <th width="80">Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @foreach ($jadwals as $jadwal)
-                        <tr>
-                            <td class="text-center">{{ $loop->iteration }}</td>
-                            <td class="text-center">{{ $jadwal->ruangan->nama }}</td> 
-                            <td class="text-center">{{ $jadwal->tanggal_format }}</td>
-                            <td class="text-center">{{ $jadwal->jam_mulai }}</td>
-                            <td class="text-center">{{ $jadwal->jam_selesai }}</td>
-                            <td class="text-center">{{ $jadwal->ket }}</td>
-                            <td class="text-center">
+                        @forelse ($jadwals as $jadwal)
+                        <tr class="text-center">
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ optional($jadwal->ruangan)->nama ?? '-' }}</td>
+                            <td>{{ $jadwal->tanggal_format }}</td>
+                            <td>{{ $jadwal->jam_mulai }}</td>
+                            <td>{{ $jadwal->jam_selesai }}</td>
+                            <td>{{ $jadwal->ket ?? '-' }}</td>
+
+                            <td>
                                 <div class="dropdown">
-                                    <button class="dropdown-toggle form-control" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
                                         <i class="ti ti-dots"></i>
                                     </button>
+
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a href="#" class="dropdown-item">
-                                                <i class="ti ti-search me-1"></i> View
+                                                View
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#" class="dropdown-item">
-                                                <i class="ti ti-pencil me-1"></i> Edit
+                                                Edit
                                             </a>
                                         </li>
                                         <li>
-                                            <form action="#" method="POST" onsubmit="return confirm('Delete this schedule?')">
+                                            <form action="#" method="POST" onsubmit="return confirm('Hapus jadwal ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="dropdown-item text-danger" type="submit">
-                                                    <i class="ti ti-trash me-1"></i> Delete
+                                                <button class="dropdown-item text-danger">
+                                                    Hapus
                                                 </button>
                                             </form>
                                         </li>
@@ -64,11 +75,23 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+
+                        @empty
+                        <tr class="text-center">
+                            <td></td>
+                            <td></td>
+                            <td>Tidak ada data</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </div>
 @endsection
