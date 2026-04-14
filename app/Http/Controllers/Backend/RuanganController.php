@@ -102,4 +102,23 @@ class RuanganController extends Controller
         toast('Data ruangan berhasil dihapus.', 'success');
         return redirect()->route('backend.ruangan.index');
     }
-}
+
+    
+    public function apiIndex()
+        {
+            $ruangans = Ruangan::latest()->get()->map(function ($r) {
+                return [
+                    'id'        => $r->id,
+                    'nama'      => $r->nama,
+                    'kapasitas' => $r->kapasitas,
+                    'fasilitas' => $r->fasilitas,
+                    'cover'     => $r->cover ? asset('storage/' . $r->cover) : null,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data'    => $ruangans,
+            ]);
+        }
+} 
